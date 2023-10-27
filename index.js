@@ -5,8 +5,14 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+// Middleware
+app.use("/", (req, res, next) => {
+    console.log("request guzri")
+    next()
+})
 
-app.use("/api", router )
+
+app.use("/api", router)
 
 
 
