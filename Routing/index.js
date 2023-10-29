@@ -1,14 +1,14 @@
 import express from "express"
-import login from "./login.js"
-import signup from "./signup.js"
+import user from "./user.js"
 import upload from "./upload.js"
+import test from "./test.js"
 
 const router = express.Router();
 
 
 
-router.use("/login", login)
-router.use("/signup", signup)
+router.use("/user", user)
+router.use("/test", test)
 router.use("/upload", upload)
 
 
