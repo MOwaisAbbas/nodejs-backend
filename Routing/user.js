@@ -13,9 +13,11 @@ router.post("/", async (req, res) => {
 
         const password = await bcrypt.hash(req.body.password, 10)
         const user = new User({ ...req.body, password })
-        const newUser = await user.save().then(res => res.toObject())
-        delete newUser.password;
-        return res.send({ name: "user added", newUser })
+        const newUser = await user.save()
+        const token = await jwt.sign({ id: user._id }, process.env.PRIVATE_KEY);
+        const userWithoutPassword = { ...newUser.toObject() };
+        delete userWithoutPassword.password;
+        return res.send({ name: "user added", userWithoutPassword ,token })
     } catch (err) {
         return res.send({ message: err.message })
     }
@@ -36,7 +38,7 @@ router.post("/login", async (req, res) => {
         const token = await jwt.sign({ id: user._id }, process.env.PRIVATE_KEY);
         const userWithoutPassword = { ...user.toObject() };
         delete userWithoutPassword.password;
-        return res.send({ message: "User Matched", userWithoutPassword ,token })
+        return res.send({ message: "User Matched", userWithoutPassword, token })
     } catch (error) {
         console.log(error.message)
     }

@@ -10,12 +10,24 @@ const router = express.Router();
 
 
 
-router.get("/", (req, res) => {
-    const head = req.headers.authorization;
-    const token = head.split(" ")
-    // jwt.verify(token[1],)
-    console.log(token[1])
-    res.send({ message: "user mil gaya" })
+router.get("/", async (req, res) => {
+    const authorizationHeader = req.headers['authorization'];
+    if (authorizationHeader) {
+        const token = authorizationHeader.split(' ')[1];
+        try {
+            const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+            const usersWithPassword = await User.find()
+            const users = usersWithPassword.map((user) => {
+                const { password, ...users } = user.toObject();
+                return users;
+            });
+
+            return res.send({ message: "users", users })
+        } catch (error) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+    }
+
 })
 
 export default router;
